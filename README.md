@@ -23,6 +23,19 @@
   - Displays the list of products per warehouse and calculates the total stock value.
 - **RESTful API:**
   - Endpoints for managing products (GET, POST, PUT, DELETE).
+
+      curl -X GET http://aftersales.psofos.gr/api/products
+
+      curl -X POST -H "Content-Type: application/json" \
+        -d '{"name": "Product Name Here", "description": "A product for testing", "price": 19.99, "quantity": 10, "warehouse_id": 1}' \
+        http://aftersales.psofos.gr/api/products
+
+      curl -X PUT -H "Content-Type: application/json" \
+        -d '{"name": "Updated Product Name Here", "description": "Updated description", "price": 24.99, "quantity": 5, "warehouse_id": 1}' \
+        http://aftersales.psofos.gr/api/products/3
+
+      curl -X DELETE http://aftersales.psofos.gr/api/products/3 
+
 - **Dashboard (Optional):**
   - Overview of statistics including total warehouses, total products, and aggregate stock value.
   - Displays weather information for each warehouse.
