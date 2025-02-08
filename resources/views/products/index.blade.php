@@ -7,12 +7,6 @@
             {{ session('success') }}
         </div>
     @endif
-
-    @if(session('error'))
-        <div id="flash-message" class="bg-red-500 text-white p-4 rounded mb-4">
-            {{ session('error') }}
-        </div>
-    @endif
     
     <h1 class="text-2xl font-bold mb-4">Products</h1>
     <a href="{{ route('products.create') }}" class="bg-blue-500 text-white px-4 py-2 rounded">Add New product</a>

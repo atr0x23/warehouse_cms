@@ -45,12 +45,6 @@ class ProductController extends Controller
             'warehouse_id' => 'required|exists:warehouses,id',
         ]);
 
-        // Check if product name already exists
-        if (Product::where('name', $validatedData['name'])->exists()) {
-            return redirect()->route('products.index')
-                             ->with('error', 'Product name already exists.');
-        }
-
         // Create the product record
         Product::create($validatedData);
 
