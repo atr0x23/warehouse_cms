@@ -32,10 +32,11 @@ class ProductController extends Controller
     }
 
     /**
-     * Store a newly created product in storage.
-     */
-    public function store(Request $request)
-    {
+ * Store a newly created product in storage.
+ */
+public function store(Request $request)
+{
+    try {
         // Validate the incoming data
         $validatedData = $request->validate([
             'name'         => 'required|string|unique:products,name',
@@ -45,13 +46,32 @@ class ProductController extends Controller
             'warehouse_id' => 'required|exists:warehouses,id',
         ]);
 
+        // Use a transaction if further operations are involved
+        DB::beginTransaction();
+
         // Create the product record
         Product::create($validatedData);
 
-        // Redirect to the products index with a flash message
+        DB::commit();
+
+        // Redirect to the products index with a success message
         return redirect()->route('products.index')
                          ->with('success', 'Product created successfully.');
+    } catch (ValidationException $e) {
+        // Handle validation errors separately
+        return redirect()->back()
+                         ->withErrors($e->errors())
+                         ->withInput();
+    } catch (\Exception $e) {
+        DB::rollBack(); // Rollback changes if an error occurs
+        Log::error('Product creation failed: ' . $e->getMessage());
+
+        return redirect()->back()
+                         ->with('error', 'An unexpected error occurred while creating the product.')
+                         ->withInput();
     }
+}
+
     
 
 
