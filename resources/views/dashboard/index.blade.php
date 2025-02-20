@@ -28,7 +28,13 @@
                     <p><i class="fas fa-cloud-sun"></i> Condition: {{ $weatherData[$warehouse->id]['weather'][0]['description'] }}</p>
                     <p><i class="fas fa-wind"></i> Wind: {{ $weatherData[$warehouse->id]['wind']['speed'] }} m/s</p>
                     <p><i class="fas fa-map-marker-alt"></i> Location: {{ $weatherData[$warehouse->id]['name'] }} | {{ $weatherData[$warehouse->id]['sys']['country'] }}</p>
-                    
+
+                    @php
+                        $warehouseProducts = $totalProductsPerWarehouse->filter(function($item) use ($warehouse) {
+                            return $item->warehouse_id == $warehouse->id;
+                        })->first();
+                    @endphp
+                    <p><i class="fas fa-archive"></i> Total products: {{ $warehouseProducts ? $warehouseProducts->total : 0 }}</p>
                 @else
                     <p>Weather data unavailable.</p>
                 @endif

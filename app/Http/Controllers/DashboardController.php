@@ -16,6 +16,9 @@ class DashboardController extends Controller
         $totalWarehouses = Warehouse::count();
         $totalProducts   = Product::count();
         $totalValue      = Product::select(DB::raw('SUM(price * quantity) as total'))->first()->total;
+        $totalProductsPerWarehouse = Product::select('warehouse_id', DB::raw('COUNT(*) as total'))
+            ->groupBy('warehouse_id')
+            ->get();
 
         //fetch weather for all warehouses
         $weatherService = new WeatherService();
@@ -25,7 +28,7 @@ class DashboardController extends Controller
             $weatherData[$warehouse->id] = $weatherService->getWeather($warehouse->latitude, $warehouse->longitude); 
         }
 
-        return view('dashboard.index', compact('totalWarehouses', 'totalProducts', 'totalValue', 'warehouses', 'weatherData'));
+        return view('dashboard.index', compact('totalWarehouses', 'totalProducts', 'totalValue', 'warehouses', 'weatherData', 'totalProductsPerWarehouse'));
     }
 }
 
