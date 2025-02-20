@@ -67,6 +67,7 @@ class ProductTest extends TestCase
 
         $response = $this->delete(route('products.destroy', $product));
         $response->assertRedirect(route('products.index'));
-        $this->assertDeleted($product);
+        $this->assertDatabaseMissing('products', ['id' => $product->id]);
+
     }
 }

@@ -59,6 +59,6 @@ class WarehouseTest extends TestCase
 
         $response = $this->delete(route('warehouses.destroy', $warehouse));
         $response->assertRedirect(route('warehouses.index'));
-        $this->assertDeleted($warehouse);
+        $this->assertDatabaseMissing('warehouses', ['id' => $warehouse->id]);
     }
 }
