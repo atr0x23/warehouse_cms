@@ -5,6 +5,9 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Warehouse;
 use App\Services\WeatherService;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Validation\ValidationException;
 
 class WarehouseController extends Controller
 {
@@ -34,20 +37,41 @@ class WarehouseController extends Controller
      */
     public function store(Request $request)
     {
-        // Validate the incoming request data
-        $validatedData = $request->validate([
-            'name'        => 'required|unique:warehouses,name',
-            'description' => 'nullable|string',
-            'latitude'    => 'required|numeric|between:-90,90',
-            'longitude'   => 'required|numeric|between:-180,180',
-        ]);
-    
-        // Create a new warehouse using the validated data
-        \App\Models\Warehouse::create($validatedData);
-    
-        // Redirect to the warehouses index page with a success message
-        return redirect()->route('warehouses.index')
-                         ->with('success', 'Warehouse created successfully.');
+        try {
+            // Validate the incoming request data
+            $validatedData = $request->validate([
+                'name'        => 'required|unique:warehouses,name',
+                'description' => 'nullable|string', 
+                'latitude'    => 'required|numeric|between:-90,90',
+                'longitude'   => 'required|numeric|between:-180,180',
+            ]);
+
+            // Use a transaction for database operations
+            DB::beginTransaction();
+
+            // Create a new warehouse using the validated data
+            \App\Models\Warehouse::create($validatedData);
+
+            DB::commit();
+
+            // Redirect to the warehouses index page with a success message
+            return redirect()->route('warehouses.index')
+                            ->with('success', 'Warehouse created successfully.');
+
+        } catch (ValidationException $e) {
+            // Handle validation errors
+            return redirect()->back()
+                            ->withErrors($e->errors())
+                            ->withInput();
+
+        } catch (\Exception $e) {
+            DB::rollBack();
+            Log::error('Warehouse creation failed: ' . $e->getMessage());
+
+            return redirect()->back()
+                            ->with('error', 'An unexpected error occurred while creating the warehouse.')
+                            ->withInput();
+        }
     }
     
 
