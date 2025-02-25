@@ -33,6 +33,6 @@
 ## Technologies Used
 - **Backend:** Laravel 11, PHP 8+
 - **Database:** MySQL 8.2
-- **Frontend:** Vue.js, Tailwind CSS
+- **Frontend:** Bootstrap css 
 - **APIs:** OpenWeather API for weather data
 - **Testing:** Laravel’s testing utilities
